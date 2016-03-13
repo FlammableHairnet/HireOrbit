@@ -41,7 +41,7 @@ var fetchAndStoreIndeedJobs = function (index, end) {
     .then(function (res) {
       // console.log('query options are: ', options)
       // console.log('results are : ', res)
-      var results = translateIndeedJSONToDB(res.results);
+      let results = translateIndeedJSONToDB(res.results);
       if(!results) throw new Error('Got no data in this request, at Index: ', index);
       console.log(`Results page number is ${res.pageNumber}`);
       return db('indeed_jobs').insert(results)
