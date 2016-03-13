@@ -39,8 +39,8 @@ var fetchAndStoreIndeedJobs = function (index, end) {
   mergeObj(options, indeedOptions);
   return request(options)
     .then(function (res) {
-      console.log('query options are: ', options)
-      console.log('results are : ', res)
+      // console.log('query options are: ', options)
+      // console.log('results are : ', res)
       var results = translateIndeedJSONToDB(res.results);
       if(!results) throw new Error('Got no data in this request, at Index: ', index);
       console.log(`Results page number is ${res.pageNumber}`);
@@ -59,14 +59,25 @@ var fetchAndStoreIndeedJobs = function (index, end) {
     })
     
 }
+var lowerCaseObjectKeys = function (obj) {
+  var keys = Object.keys(obj), key;
+  var l = keys.length;
+  var newObj = {};
+  while(l--){
+    key = keys[l];
+    newObj[key.toLowerCase()] = obj[key];
+  }
+  return newObj;
+}
 
 var translateIndeedJSONToDB = function (results) {
   results = results.map(function (job) {
-     job.date = dateFormat(job.date, 'yyyy-mm-dd hh:mm:ss');
-     job.latitude = JSON.stringify(job.latitude);
-     job.longitude = JSON.stringify(job.longitude);
-     job.snippet = job.snippet.substring(0, 1499);
-     return job;
+   job = lowerCaseObjectKeys(job);
+   job.date = dateFormat(job.date, 'yyyy-mm-dd hh:mm:ss');
+   job.latitude = JSON.stringify(job.latitude);
+   job.longitude = JSON.stringify(job.longitude);
+   job.snippet = job.snippet.substring(0, 1499);
+   return job;
   });
   return results;
 } 

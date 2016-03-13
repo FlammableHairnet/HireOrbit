@@ -1,8 +1,7 @@
 const db = {
-  dbName: 'hireOrbit',
+  dbName: 'hireorbit',
   dbHost: 'localhost',
-  dbUser: 'hireOrbit',
-  dbPassword: 'pass'
+  dbUser: 'shivg',
 }
 
 module.exports = db;

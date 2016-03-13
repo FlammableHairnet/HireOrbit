@@ -44,8 +44,12 @@ if (production) {
 module.exports = {
   entry: './client/init.js',
   output: { path: outputPath, filename: 'bundle.js' },
+  devServer: {
+    inline: true,
+    port: 8000
+  },
   // plugin: plugins,
-  devtool: 'eval-source-map',
+  devtool: 'cheap-eval-source-map ',
   module: {
     loaders: [
       {
@@ -53,7 +57,7 @@ module.exports = {
         loader: 'babel',
         exclude: [/node_modules/, /typings/, /bower_components/],
         query: {
-          presets: ['react', 'es2015']
+          presets: ['es2015', 'react']
         }
       }
     ]
