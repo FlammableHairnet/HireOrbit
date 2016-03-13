@@ -5,11 +5,11 @@ const mergeDefault = _.defaults
 
 const Utils = {
   lowerCaseObjectKeys: function (obj) {
-    var keys = Object.keys(obj), key;
+    var keys = Object.keys(obj);
     var l = keys.length;
     var newObj = {};
     while(l--){
-      key = keys[l];
+      let key = keys[l];
       newObj[key.toLowerCase()] = obj[key];
     }
     return newObj;
