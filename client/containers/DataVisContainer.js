@@ -2,65 +2,74 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import dataVisual from '../reducers/index';
 import d3 from 'd3';
+import _ from 'lodash';
 
-const styles = {
-  width   : 500,
-  height  : 300,
-  padding : 20,
-};
-
-const spec = {
-  width: 600,
-  height: 300,
-  border: "1px solid #ffff00",
-  display: "block",
-  margin: "0 auto"
-}
-
-const h1 = {
-  color: "white"
-}
-
-  let xMax = (data)  => d3.max(data, (d) => d);
-  let yMax = (data)  => d3.max(data, (d) => d);
-
-  let xScale = (props) => {
-    return d3.scale.linear()
-            .domain( [ 0, xMax(props[0]) ])
-            .range([0, yMax(props[1])])
-  }
-  let yScale = (props) => {
-    return d3.scale.linear()
-            .domain([0, xMax(props[0])])
-            .range([0, yMax(props[1])])
-  }
-  let rScale = (props) => {
-    return d3.scale.linear()
-            .domain([0, xMax(props[1])])
-            .range([10 , 100])
-  }
-  let marshalScale = (props) => {
-    const scales = {
-      xScale: xScale(props),
-      yScale: yScale(props),
-      rScale: rScale(props)
-    };
-    return Object.assign({}, props, scales);
+  const spec = {
+    h: 600,
+    w: 300
   }
 
+  const dataset = [ 5, 10, 15, 20, 25 ];
+  const dataset2 = [
+  {x: 'a', y: 20},
+  {x: 'b', y: 14},
+  {x: 'c', y: 12},
+  {x: 'd', y: 19},
+  {x: 'e', y: 18},
+  {x: 'f', y: 15},
+  {x: 'g', y: 10},
+  {x: 'h', y: 14}
+];
 
-const renderCircles = (props) => {
-    let x = (Math.random() * .2) * props
-    let y = (Math.random() * .2) * props;
-    console.log('from the render circle', x, y);
-    const circleProps = {
-      cx: x,
-      cy: y,
-      r: 20,
-      fill: "#ffff00"
-    };
-    return <circle {...circleProps} />;
-  };
+
+  let Chart = React.createClass({
+    render: function () {
+      console.log('chart this.props.children ', this.props.children)
+      return (
+        <svg width={this.props.width}
+             height={this.props.height} >
+              {this.props.children}
+        </svg>
+      )
+    }
+  });
+
+  let Bar = React.createClass({
+    getDefaultProps: function() {
+      return {
+        data: []
+      }
+    },
+
+    render: function () {
+      let props = this.props;
+      let data = props.data.map(function (d) {return d.y})
+
+      let xScale = d3.scale.ordinal()
+                     .domain(d3.range(data.length))
+                     .rangeRoundBands([0, this.props.width, 0.05])
+
+      let yScale = d3.scale.linear()
+                     .domain( [ 0, d3.max(data)] )
+                     .range([0, this.props.height])
+
+      console.log('xScale.rangeBand() ', xScale.rangeBand())
+      let Bars = data.map(function(e, i) {
+        var height = yScale(e),
+            y = props.height - height,
+            width = xScale.rangeBand(),
+            x = xScale(i)
+            console.log('bars', height, y, width, x);
+      });
+
+      return (
+        <g>{Bars}</g>
+      )
+    }
+
+  });
+
+
 
 class DataVisContainer extends Component {
 
@@ -72,17 +81,16 @@ class DataVisContainer extends Component {
     const location = data.location;
     const totalResults = data.totalResults;
     const query = data.query;
-    console.log(query, location, totalResults);
-    // <svg style={spec}>
-    //       {this.props.dataVisual.map(this.renderList)}
-    // </svg>
-    // return renderCircles(totalResults);
-    return <li>`{query} lives in the city of {location}. {query} Weighs a ton. {query} weighs a grand total of {totalResults} lbs. `</li>
+
   }
 
+
   render () {
+    console.log('adsfa',this.props.dataVisual)
     return (
-      <ul style={h1}>  { this.props.dataVisual.map(this.renderList) } </ul>
+      <Chart width={spec.w} height={spec.h}>
+        <Bar data={dataset2} width={spec.w} height={spec.h} />
+      </Chart>
     )
   }
 }
