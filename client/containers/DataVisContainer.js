@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import dataVisual from '../reducers/index';
 import d3 from 'd3';
 import _ from 'lodash';
-  
+
   // Styles
   const filler = {
     fill: 'white',
@@ -38,7 +38,6 @@ import _ from 'lodash';
       )
     }
   });
-
 
   // BAR COMPONENT with scaling functionality
   let Bar = React.createClass({
@@ -177,8 +176,8 @@ class DataVisContainer extends Component {
   constructor(props) {
     super(props)
   }
-  // Chart returns svg, with contents of Bar components.
-  render () {
+
+  render () {    
     return (
       <Chart width={500} height={500}>
         <Bar data={this.props.dataVisual} width={500} height={500} />

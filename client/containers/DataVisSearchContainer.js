@@ -86,7 +86,7 @@ import _ from 'lodash';
               <button type="submit">Submit</button>
             </span>
           </form>
-          <DataVisContainer />
+            <DataVisContainer />
         </div>
       );
     }
