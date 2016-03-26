@@ -105,10 +105,19 @@ export function deleteEventFromCard(event) {
 
 export function fetchDataVis(searches) {
 	function location () {
-		return dataset[Math.floor(Math.random() * dataset.length)].location
+		var result = [];
+		for (var i = 0; i < dataset.length;i++) {
+			result.push(dataset[Math.floor(Math.random() * dataset.length)].location)
+		}
+		return result;
 	}
+
 	function totalResults () {
-			return Math.floor((Math.random() * 1000) * 7)
+		var result = []
+			for (var i = 0; i < dataset.length; i++) {
+					result.push(Math.floor((Math.random() * 1000) * 7))
+			}
+		return result;
 	}
 
 	var obj = {
@@ -119,7 +128,7 @@ export function fetchDataVis(searches) {
 
   return {
     type: actions.FETCH_DATA_VIS,
-    payload: [obj]
+    payload: totalResults()
   }
 }
 
