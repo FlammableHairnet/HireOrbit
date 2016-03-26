@@ -43,7 +43,7 @@ import d3 from 'd3';
               <button type="submit">Submit</button>
             </span>
           </form>
-          <DataVisContainer />
+            <DataVisContainer />
         </div>
       );
     }
