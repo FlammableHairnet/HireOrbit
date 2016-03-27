@@ -10,17 +10,20 @@ import d3 from 'd3';
 
     constructor(props){
       super(props)
+      console.log('props', props)
       this.state = {
         term: ''
       }
+      // Bind keyboard input change to DataVisSearchContainer
       this.onPutChange = this.onPutChange.bind(this);
+      // Bind keyboard input submit to DataVisSearchContainer
       this.onSubmit = this.onSubmit.bind(this);
     }
-
+    // Change state on each keyboard input
     onPutChange (e) {
       this.setState({term: e.target.value});
     }
-
+    // Pervent refresh, send data to action creator, reset keyboard input to empty string.
     onSubmit (e) {
       e.preventDefault();
       // call the term value inside the fetchWeater from action creator
@@ -29,13 +32,13 @@ import d3 from 'd3';
       this.setState({term: ''});
       console.log(this.state.term)
     }
-
-      render() {
+    // Form data
+    render() {
       return (
         <div>
           <form onSubmit={this.onSubmit}>
             <input
-            placeholder="Get a five-day forecast in your favorite cities"
+            placeholder="Enter Job title"
             value={this.state.term}
             onChange={this.onPutChange}
             />

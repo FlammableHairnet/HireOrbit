@@ -4,6 +4,15 @@ import dataVisual from '../reducers/index';
 import d3 from 'd3';
 import _ from 'lodash';
 
+  const filler = {
+    fill: 'white',
+    textAnchor: 'middle'
+  }
+  const alt = {
+    fill : 'steelblue',
+    textAnchor: 'middle'
+  }
+
   const dataset = [ 5, 10, 15, 20, 25 ];
 
   const dataset2 = [
@@ -17,6 +26,7 @@ import _ from 'lodash';
     {x: 'h', y: 14}
   ];
 
+  // Cross-cutting-concerns
   const SetIntervalMixin = {
     componentWillMount: function() {
       this.intervals = [];
@@ -29,11 +39,11 @@ import _ from 'lodash';
     }
   };
 
-
+  // Create Chart component to return svg
   let Chart = React.createClass({
     render: function () {
       return (
-        <svg width={this.props.width}
+        <svg className="svg" width={this.props.width}
              height={this.props.height} >
               {this.props.children}
         </svg>
@@ -41,6 +51,8 @@ import _ from 'lodash';
     }
   });
 
+
+  //Bar components returns content of Rect component
   let Bar = React.createClass({
     getDefaultProps: function() {
       return {
@@ -50,38 +62,51 @@ import _ from 'lodash';
 
     render: function () {
       let props = this.props
-      console.log('PRRROOOPSS', props)
+      // Padding of 25 percent of max value
+      let padding = d3.max(props.data) * 0.25;
+      // Create a xScale to scale width inputs
       let xScale = d3.scale.ordinal()
                      .domain(d3.range(props.data.length))
-                     .rangeRoundBands([0, props.width, 0.05])
+                     .rangeRoundBands([0, props.width], 0.4)
+
+      // padding: domain input of 0 to max, max + plus 25 percent of max value obtain in data array.
       let yScale = d3.scale.linear()
-                     .domain( [ 0, d3.max(props.data)] )
+                     .domain( [ 0, d3.max(props.data)+padding] )
                      .range([0, props.height])
-
-      let bars = props.data.map(function(e, i) {
-        console.log('asfeeee',e)
-        var height = yScale(e),
+      // Iterate through the data array
+      let bars = props.data.map(function(dataPoint, i) {
+        // scale the height
+        var height = yScale(dataPoint),
+        // scale width using rangeBand, outputs an integer
             width = xScale.rangeBand(),
+            // props height minus scaled height
             y = props.height - height,
-            x = xScale(i)
-
+            // scale index
+            x = xScale(i);
+        // for each iteration, send props to Rect component
         return (
           <Rect
+            key={dataPoint}
             width={width}
             height={height}
             x={x}
             y={y}
+            data={dataPoint}
           />
         )
       });
-
+      // When bar returns, render contents of bars
       return (
         <g>{bars}</g>
       )
     }
+
+
   });
 
+  //
   var Rect = React.createClass({
+    // use Mixins to cancel setIntervals when not needed
     mixins: [SetIntervalMixin],
     getDefaultProps: function () {
       return {
@@ -92,19 +117,64 @@ import _ from 'lodash';
       }
     },
 
+    // Set the lifecycle
+    getInitialState: function () {
+      return {
+        milliseconds: 0,
+        height: 0
+      }
+    },
+
+    // Should return true to avoid bugs, when return false,
+      // render() will be skipped shouldComponentUpdate, componentWillUpdate will be not be called.
+    shouldComponentUpdate: function (nextProps) {
+      return this.props.height !== this.state.height;
+    },
+    // Before render, log the message
+    componentWillMount: function () {
+      console.log('will mount');
+    },
+    // When component receives new props, not on initial render.
+    componentWillReceiveProps: function (nextProps) {
+      console.log('next props', nextProps)
+      this.setState({milliseconds: 0, height: this.props.height})
+    },
+    // When render activates, run the setInterval with the tick function.
+    componentDidMount: function () {
+      this.setInterval(this.tick, 10);
+    },
+    // Every tick, add 10 to the state.milliseconds
+    tick: function (start) {
+        this.setState({milliseconds: this.state.milliseconds + 10});
+    },
+
     render: function () {
-      console.log('this !', this.props)
+      var bounce = d3.ease('bounce');
+      var height = this.state.height + (this.props.height - this.state.height) * bounce(Math.min(1, this.state.milliseconds/1000));
+      var y = height + this.props.y;
       return (
+        <g>
         <rect
           className="bar"
-          height={this.props.height}
+          height={height}
           width={this.props.width}
           x={this.props.x}
-          y={this.props.y}
-        ></rect>
+          y={this.props.y} >
+          </rect>
+          <text
+          x={this.props.x + (this.props.width/2)}
+          y={ height < 35 ? this.props.y : this.props.y+20}
+          style={ height < 35 ? alt : filler}
+          >
+          {this.props.data}
+          </text>
+        </g>
       )
     }
+
   })
+
+
 
 
 
@@ -114,16 +184,8 @@ class DataVisContainer extends Component {
     super(props)
   }
 
-  renderList (data) {
-    const location = data.location;
-    const totalResults = data.totalResults;
-    const query = data.query;
-  }
-
-
-
+  // Chart returns svg, with contents of Bar components.
   render () {
-    console.log('adsfa',this.props.dataVisual)
     return (
       <Chart width={500} height={500}>
         <Bar data={this.props.dataVisual} width={500} height={500} />
