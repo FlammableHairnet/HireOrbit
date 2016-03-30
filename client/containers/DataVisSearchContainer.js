@@ -31,7 +31,7 @@ import _ from 'lodash';
       // if key exist, change the state value to input value
       this.setState({[key]: e.target.value});
     }
-    // Pervent refresh, send data to action creator, reset keyboard input to empty string.
+    // On submit, obtain user job position and city, send data to redux store.
     onSubmit (e) {
       var dataVisArray = [];
       var self = this;
