@@ -1174,6 +1174,8 @@ iframe {
   color: #ececec;
 }
 
+/* Styles for DataVis */
+
 rect.bar {
   fill: steelblue;
   stroke: lightsteelblue;
@@ -1186,6 +1188,5 @@ svg.svg {
   margin-top: 5em;
   background-color: white;
   border-radius: 3.5px;
-  bow
 }
 
