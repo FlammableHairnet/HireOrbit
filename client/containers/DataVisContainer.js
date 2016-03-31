@@ -101,8 +101,6 @@ import _ from 'lodash';
         <g>{bars}</g>
       )
     }
-
-
   });
 
   //RECT COMPONENT with transition functionality
@@ -117,7 +115,6 @@ import _ from 'lodash';
         y: 0
       }
     },
-
     // Set the lifecycle
     getInitialState: function () {
       return {
@@ -141,7 +138,6 @@ import _ from 'lodash';
     },
 
     render: function () {
-
       // use the d3 bounce transition
       var bounce = d3.ease('bounce'),
           height = this.props.height * bounce(Math.min(1, this.state.milliseconds/800)),
