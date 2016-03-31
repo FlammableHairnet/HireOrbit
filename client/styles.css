@@ -865,6 +865,13 @@ iframe {
   color: #ff3333;
 }
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+.note-container {
+}
+
+>>>>>>> Add barchart style, add barchart transitions, add rect-height below 35 raise text display above each chart
 .card-count {
   color: #6D3A0A;
 }
@@ -1173,6 +1180,7 @@ iframe {
 .login span {
   color: #ececec;
 }
+
 
 /* Styles for DataVis */
 

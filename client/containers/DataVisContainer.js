@@ -101,10 +101,13 @@ import _ from 'lodash';
         <g>{bars}</g>
       )
     }
+
+
   });
 
   //RECT COMPONENT with transition functionality
   var Rect = React.createClass({
+    // use Mixins to cancel setIntervals when not needed
     mixins: [SetIntervalMixin],
     getDefaultProps: function () {
       return {
@@ -122,6 +125,7 @@ import _ from 'lodash';
         height: 0
       }
     },
+
     // When component receives new props, reset milliseconds back to 0.
     componentWillReceiveProps: function (nextProps) {
       this.setState({milliseconds: 0})
@@ -137,6 +141,7 @@ import _ from 'lodash';
     },
 
     render: function () {
+
       // use the d3 bounce transition
       var bounce = d3.ease('bounce'),
           height = this.props.height * bounce(Math.min(1, this.state.milliseconds/800)),

@@ -11,6 +11,7 @@ import _ from 'lodash';
   class DataVisSearchContainer extends Component {
     constructor(props){
       super(props)
+
       // Declare initial state
       this.state = {
         term: '',
@@ -18,6 +19,7 @@ import _ from 'lodash';
         city2: '',
         city3: ''
       }
+
       // Bind keyboard input submit to DataVisSearchContainer
       this.onSubmit = this.onSubmit.bind(this);
       // Bind keyboard stateChange to DataVisSearchContainer
