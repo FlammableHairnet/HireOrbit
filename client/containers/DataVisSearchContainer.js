@@ -14,7 +14,6 @@ import _ from 'lodash';
       // Declare initial state
       this.state = {
         term: '',
-        city: '',
         city1: '',
         city2: '',
         city3: ''
