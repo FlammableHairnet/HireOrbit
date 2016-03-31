@@ -31,8 +31,6 @@ class Search extends React.Component {
     let { q, l, limit, radius, jt, st, start } = query;
     let self = this;
 
-    console.log('@Search Q', this.props.currentQuery);
-
     Utils.getJobsFromIndeed(query, (res) => {
       self.props.updateCurrentSearch(res);
     }, console.log.bind(console));

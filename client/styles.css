@@ -25,7 +25,7 @@ body {
 header {
   display: flex;
   justify-content: space-between;
-  background: rgba(0, 0, 0, 0.85);
+  background: rgb(0, 0, 0);
   position: fixed;
   width: 100%;
   top: 0;
@@ -57,6 +57,7 @@ header h1 img {
   display: flex;
   justify-content: center;
   height: 100%;
+  padding-top: 66px;
 }
 
 /* navigation styles */ 
@@ -143,8 +144,8 @@ video#bgvid {
   transform: translateX(-50%) translateY(-50%);
 }
 
-.overlay {
-  position: absolute;
+.video-overlay {
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -1203,7 +1204,6 @@ iframe {
 
 .login span {
   color: #ececec;
-  background-color: #E24E2A;
 }
 
 .circular-image {
