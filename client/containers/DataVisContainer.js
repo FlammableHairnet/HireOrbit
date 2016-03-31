@@ -105,7 +105,6 @@ import _ from 'lodash';
 
   //RECT COMPONENT with transition functionality
   var Rect = React.createClass({
-    // use Mixins to cancel setIntervals when not needed
     mixins: [SetIntervalMixin],
     getDefaultProps: function () {
       return {
@@ -115,6 +114,7 @@ import _ from 'lodash';
         y: 0
       }
     },
+
     // Set the lifecycle
     getInitialState: function () {
       return {
