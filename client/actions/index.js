@@ -1,34 +1,5 @@
 import { actions } from '../constants';
 
-var dataset = [
-				{
-        	location: "San Francisco, ca",
-          totalResults: 7323,
-					query : "software engineer"
-       	},
-        {
-        	location: "Los Angeles, ca",
-        	totalResults: 1630,
-					query: "web developer"
-        },
-        {
-        	location: "San Jose, ca",
-        	totalResults: 119,
-					query: "massage therapist"
-        },
-        {
-        	location: "Sunnyvale, ca",
-        	totalResults: 9660,
-					query: "software engineer"
-        },
-        {
-        	location: "New York, ny",
-        	totalResults: 1027,
-					query: "front End Web Developer"
-        }
-		];
-
-
 export function updateCardStatus(card_id, status) {
   return {
     type: actions.UPDATE_CARD_STATUS,
@@ -103,23 +74,11 @@ export function deleteEventFromCard(event) {
   }
 }
 
-export function fetchDataVis(searches) {
-	function location () {
-		return dataset[Math.floor(Math.random() * dataset.length)].location
-	}
-	function totalResults () {
-			return Math.floor((Math.random() * 1000) * 7)
-	}
-
-	var obj = {
-		location: location(),
-		totalResults: totalResults(),
-		query: searches
-	}
+export function fetchDataVis(responses) {
 
   return {
     type: actions.FETCH_DATA_VIS,
-    payload: [obj]
+    payload: responses
   }
 }
 

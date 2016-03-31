@@ -2,96 +2,193 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import dataVisual from '../reducers/index';
 import d3 from 'd3';
+import _ from 'lodash';
 
-const styles = {
-  width   : 500,
-  height  : 300,
-  padding : 20,
-};
-
-const spec = {
-  width: 600,
-  height: 300,
-  border: "1px solid #ffff00",
-  display: "block",
-  margin: "0 auto"
-}
-
-const h1 = {
-  color: "white"
-}
-
-  let xMax = (data)  => d3.max(data, (d) => d);
-  let yMax = (data)  => d3.max(data, (d) => d);
-
-  let xScale = (props) => {
-    return d3.scale.linear()
-            .domain( [ 0, xMax(props[0]) ])
-            .range([0, yMax(props[1])])
+  // Styles
+  const filler = {
+    fill: 'white',
+    textAnchor: 'middle'
   }
-  let yScale = (props) => {
-    return d3.scale.linear()
-            .domain([0, xMax(props[0])])
-            .range([0, yMax(props[1])])
-  }
-  let rScale = (props) => {
-    return d3.scale.linear()
-            .domain([0, xMax(props[1])])
-            .range([10 , 100])
-  }
-  let marshalScale = (props) => {
-    const scales = {
-      xScale: xScale(props),
-      yScale: yScale(props),
-      rScale: rScale(props)
-    };
-    return Object.assign({}, props, scales);
+  const alt = {
+    fill : 'steelblue',
+    textAnchor: 'middle'
   }
 
-
-const renderCircles = (props) => {
-    let x = (Math.random() * .2) * props
-    let y = (Math.random() * .2) * props;
-    console.log('from the render circle', x, y);
-    const circleProps = {
-      cx: x,
-      cy: y,
-      r: 20,
-      fill: "#ffff00"
-    };
-    return <circle {...circleProps} />;
+  // Cross-cutting-concerns, MIXINS
+  const SetIntervalMixin = {
+    componentWillMount: function() {
+      this.intervals = [];
+    },
+    setInterval: function() {
+      this.intervals.push(setInterval.apply(null, arguments));
+    },
+    componentWillUnmount: function() {
+      this.intervals.map(clearInterval);
+    }
   };
 
-class DataVisContainer extends Component {
+  // CHART COMPONENT returns svg tags
+  let Chart = React.createClass({
+    render: function () {
+      return (
+        <svg className="svg" width={this.props.width}
+             height={this.props.height} >
+              {this.props.children}
+        </svg>
+      )
+    }
+  });
 
+  // BAR COMPONENT with scaling functionality
+  let Bar = React.createClass({
+    getDefaultProps: function() {
+      return {
+        data: []
+      }
+    },
+
+    render: function () {
+      // has data, width, and height
+      let props = this.props;
+      // array of objects, query, location, totalResults
+      let totalResult = _.map(props.data, function (obj) {
+        return obj.totalResults;
+      });
+      // obtain the locations of the search
+      let locations = _.map(props.data, function (obj) {
+        return obj.location;
+      });
+        
+      // Initial state, data is empty array, so nothing breaks. When submit, populates the data array, let data be totalResult.
+      let data = props.data.length > 0 ? totalResult : props.data;
+      // If data is not an empty array, calculate of 25 percent of max value in array.
+      let paddingValue = data.length > 0 ? d3.max(data)*.25 : 0;
+      // Create a xScale to scale width inputs of array length
+      let xScale = d3.scale.ordinal()
+                     .domain(d3.range(data.length))
+                     .rangeRoundBands([0, props.width], 0.6)
+      // padding: domain input of 0 to max with height padding
+      let yScale = d3.scale.linear()
+                     .domain( [ 0, d3.max(data) + paddingValue] )
+                     .range([0, props.height])
+      // Will not iterate on empty array, if array is populated, it will run.
+      let bars = props.data.map(function(obj, i) {
+      // scale the height
+      let height = yScale(obj.totalResults),
+          // scale width using rangeBand, outputs an integer
+          width = xScale.rangeBand(),
+          // props height minus scaled height
+          y = props.height - height,
+          // scale index
+          x = xScale(i);
+        // For each iteration, send props to Rect component
+        return (
+          <g>
+            <Rect
+              key={obj.location}
+              width={width}
+              height={height}
+              x={x}
+              y={y}
+              data={obj.totalResults}
+              location={obj.location}
+            />
+          </g>
+        )
+      });
+      // When bar returns, render contents of bars
+      return (
+        <g>{bars}</g>
+      )
+    }
+  });
+
+  //RECT COMPONENT with transition functionality
+  var Rect = React.createClass({
+    // use Mixins to cancel setIntervals when not needed
+    mixins: [SetIntervalMixin],
+    getDefaultProps: function () {
+      return {
+        width: 0,
+        height: 0,
+        x: 0,
+        y: 0
+      }
+    },
+    // Set the lifecycle
+    getInitialState: function () {
+      return {
+        milliseconds: 0,
+        height: 0
+      }
+    },
+
+    // When component receives new props, reset milliseconds back to 0.
+    componentWillReceiveProps: function (nextProps) {
+      this.setState({milliseconds: 0})
+    },
+    // When render activates, run the setInterval with the tick function.
+    componentDidMount: function () {
+      // Call enter methods here
+      this.setInterval(this.tick, 10);
+    },
+    // Every tick, add 10 to the state.milliseconds
+    tick: function (start) {
+        this.setState({milliseconds: this.state.milliseconds + 10});
+    },
+
+    render: function () {
+      // use the d3 bounce transition
+      var bounce = d3.ease('bounce'),
+          height = this.props.height * bounce(Math.min(1, this.state.milliseconds/800)),
+          style = height < 30 ? alt : filler;
+          
+      return (
+        <g>
+          <rect
+            className='bar'
+            height={height}
+            width={this.props.width}
+            x={this.props.x}
+            y={this.props.y} 
+            >
+          </rect>
+          <text
+            x={this.props.x + (this.props.width/2)}
+            y={ height < 30 ? this.props.y : this.props.y+20}
+            style={style}
+            >
+            {this.props.data}
+          </text>
+          <text
+            x={this.props.x + (this.props.width/2)}
+            style={{textAnchor: 'middle', textTransform: 'capitalize'}}
+            y={this.props.y-20}
+            >
+            {this.props.location}
+          </text>
+        </g>
+      )
+    }
+  });
+
+//DataVisContainer smart comoponent, access to Redux store.
+class DataVisContainer extends Component {
   constructor(props) {
     super(props)
   }
 
-  renderList (data) {
-    const location = data.location;
-    const totalResults = data.totalResults;
-    const query = data.query;
-    console.log(query, location, totalResults);
-    // <svg style={spec}>
-    //       {this.props.dataVisual.map(this.renderList)}
-    // </svg>
-    // return renderCircles(totalResults);
-    return <li>`{query} lives in the city of {location}. {query} Weighs a ton. {query} weighs a grand total of {totalResults} lbs. `</li>
-  }
-
-  render () {
+  render () {    
     return (
-      <ul style={h1}>  { this.props.dataVisual.map(this.renderList) } </ul>
+      <Chart width={500} height={500}>
+        <Bar data={this.props.dataVisual} width={500} height={500} />
+      </Chart>
     )
   }
 }
-
-
-
-
+//Access the state
 function mapStateToProps({dataVisual}) {
   return {dataVisual};
-}
-
-export default connect(mapStateToProps, null)(DataVisContainer)
+};
+//Convert DataViseContainer into an smart component
+export default connect(mapStateToProps, null)(DataVisContainer);

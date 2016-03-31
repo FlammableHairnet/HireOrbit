@@ -54,7 +54,7 @@ header h1 img {
   height: 100%;
 }
 
-/* navigation styles */ 
+/* navigation styles */
 nav {
   flex: 9;
 }
@@ -113,7 +113,7 @@ nav a i {
 .fa-user:hover {
   color: rgb(92, 94, 220);
 }
-/* navigation styles */ 
+/* navigation styles */
 
 /* homepage */
 .search-container {
@@ -309,7 +309,7 @@ form.search .advanced .advanced__container {
 .search-results aside .types {
   font-size: 0.875rem;
   line-height: 1.25rem;
-}  
+}
 
 .search-results aside .types div {
   text-decoration: none;
@@ -480,7 +480,7 @@ form.search .advanced .advanced__container {
   width: 10%;
 }
 
-/* Kanban styles */ 
+/* Kanban styles */
 h1 {
   font-weight: 200;
   color: #3b414c;
@@ -865,9 +865,6 @@ iframe {
   color: #ff3333;
 }
 
-.note-container {
-}
-
 .card-count {
   color: #6D3A0A;
 }
@@ -1176,3 +1173,20 @@ iframe {
 .login span {
   color: #ececec;
 }
+
+/*Styles for DataVis*/
+
+rect.bar {
+  fill: steelblue;
+  stroke: lightsteelblue;
+  stroke-width: 2px;
+  opacity: .7;
+  stroke-linecap: "round";
+}
+
+svg.svg {
+  margin-top: 5em;
+  background-color: white;
+  border-radius: 3.5px;
+}
+
